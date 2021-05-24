@@ -1,6 +1,6 @@
 ﻿using Aspose.Email.Cloud.Live.Demos.UI.Models;
+using Aspose.Email.Cloud.Live.Demos.UI.Services;
 using Aspose.Email.Cloud.Sdk.Api;
-using Aspose.Email.Cloud.Sdk.Model;
 using System.IO;
 using System.Web.Mvc;
 
@@ -38,15 +38,10 @@ namespace Aspose.Email.Cloud.Live.Demos.UI.Controllers
             var file = postedFile.InputStream;
             string outputFileName = Path.GetFileNameWithoutExtension(fileName) + "." + outputType;
 
-            EmailConvertRequest ecr = new EmailConvertRequest()
-            {
-                File = file,
-                FromFormat = fromFormat,
-                ToFormat = toFormat
-            };
+            AsposeEmailCloudApiService asposeEmailCloudApiService = new AsposeEmailCloudApiService();
+            var convertResult = asposeEmailCloudApiService.ConversionByEmailCloudApi(EmailCloudApi, file, fromFormat, toFormat);
 
-            var result = EmailCloudApi.Email.Convert(ecr);
-            Session[Config.Configuration.SessionKeyConvertResult] = result;
+            Session[Config.Configuration.SessionKeyConvertResult] = convertResult;
 
             return new Response
             {
@@ -54,6 +49,8 @@ namespace Aspose.Email.Cloud.Live.Demos.UI.Controllers
                 FileName = outputFileName
             };
         }
+
+        [HttpGet]
         public ActionResult Conversion()
         {
             var model = new ViewModel(this, "Conversion")
